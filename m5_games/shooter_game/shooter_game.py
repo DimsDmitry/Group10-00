@@ -1,5 +1,6 @@
 from pygame import *
 from random import randint
+from time import time as timer
 
 
 '''создаём игровое окно'''
@@ -15,6 +16,7 @@ score = 0 #сбито кораблей
 lost = 0 #пропущено кораблей
 max_lost = 3 #максимальное кол-во пропущенных кораблей
 goal = 20 #сколько кораблей нужно сбить для победы
+life = 3 #очки здоровья
 
 
 '''классы для спрайтов игры'''
@@ -62,6 +64,16 @@ class Enemy(GameSprite):
             lost += 1
 
 
+class Asteroid(GameSprite):
+    '''класс спрайта-астероида'''
+    def update(self):
+        self.rect.y += self.speed
+        '''враг исчезает, если дойдёт до края экрана'''
+        if self.rect.y > win_height:
+            self.rect.x = randint(80, win_width - 80)
+            self.rect.y = 0
+
+
 class Bullet(GameSprite):
     '''класс спрайта-пули'''
     def update(self):
@@ -74,6 +86,12 @@ class Bullet(GameSprite):
 
 '''создаём спрайты'''
 ship = Player('rocket.png', 5, win_height - 100, 80, 100, 10)
+
+
+asteroids = sprite.Group()
+for i in range(1, 3):
+    meteor = Asteroid('asteroid.png', randint(80, win_width - 80), -40, 80, 50, randint(1, 7))
+    asteroids.add(meteor)
 
 monsters = sprite.Group()
 for i in range(1, 6):
@@ -96,11 +114,15 @@ font1 = font.Font(None, 40)
 win = font1.render('ПОБЕДА', True, (255, 255, 255))
 
 font2 = font.Font(None, 36)
+font3 = font.Font(None, 80)
 
 
 '''игровой цикл'''
 run = True
 finish = False
+
+rel_time = False #флаг, отвечающий за перезарядку
+num_fire = 0 #переменная для подсчёта выстрелов
 
 while run:
     for e in event.get():
@@ -108,8 +130,14 @@ while run:
             run = False
         elif e.type == KEYDOWN:
             if e.key == K_SPACE:
-                fire_sound.play()
-                ship.fire()
+                if num_fire < 5 and not rel_time:
+                    num_fire += 1
+                    fire_sound.play()
+                    ship.fire()
+                if num_fire >= 5 and not rel_time:
+                    last_time = timer()
+                    rel_time = True
+
 
     if not finish:
         '''обновляем фон'''
@@ -126,11 +154,27 @@ while run:
         ship.update()
         monsters.update()
         bullets.update()
+        asteroids.update()
 
         '''обновляем спрайты в новом местоположении при каждой итерации цикла'''
         ship.reset()
         monsters.draw(window)
         bullets.draw(window)
+        asteroids.draw(window)
+
+
+        '''перезарядка'''
+        if rel_time:
+            now_time = timer()
+
+            if now_time - last_time < 3:
+                '''пока не прошло 3 секунды, выводим информацию о перезарядке'''
+                reload = font2.render('Подождите, перезарядка...', 1, (150, 0, 0))
+                window.blit(reload, (200, 460))
+            else:
+                '''обнуляем счётчик пуль, сбрасываем флаг перезарядки'''
+                num_fire = 0
+                rel_time = False
 
         '''фиксируем касания монстров и пуль'''
         collides = sprite.groupcollide(monsters, bullets, True, True)
@@ -142,15 +186,32 @@ while run:
         '''текст поражения должен постоянно обновлять значение score'''
         lose = font1.render(f'ПОРАЖЕНИЕ! Сбито {str(score)} кораблей', True, (187, 30, 0))
 
+
+        if sprite.spritecollide(ship, monsters, True) or sprite.spritecollide(ship, asteroids, True):
+            life -= 1
+
         '''условие поражения'''
-        if sprite.spritecollide(ship, monsters, False) or lost >= max_lost:
+        if life == 0 or lost >= max_lost:
             finish = True
             window.blit(lose, (200, 200))
+
 
         '''условие победы'''
         if score >= goal:
             finish = True
             window.blit(win, (200, 200))
+
+
+        '''задаём разный цвет в зависимости от кол-ва жизней'''
+        if life == 3:
+            life_color = (0, 150, 0)
+        if life == 2:
+            life_color = (150, 150, 0)
+        if life == 1:
+            life_color = (150, 0, 0)
+
+        text_life = font3.render(str(life), 1, life_color)
+        window.blit(text_life, (600, 20))
 
         display.update()
 
