@@ -98,6 +98,7 @@ for i in range(1, 6):
     monster = Enemy('ufo.png', randint(80, win_width - 80), -40, 80, 50, randint(1, 5))
     monsters.add(monster)
 
+
 bullets = sprite.Group()
 
 '''фоновая музыка'''
