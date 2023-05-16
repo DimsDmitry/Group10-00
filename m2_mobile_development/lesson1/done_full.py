@@ -89,7 +89,7 @@ class FourthScr(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         vl = BoxLayout(orientation='vertical', spacing=8)
-        a = 'START ' + ' Группа 13:30 - топ ' * 200
+        a = 'START ' + ' Кто прочитал - минус 100 астрокоинов ' * 200
         test_label = Label(text="Дополнительное задание", size_hint=(0.3, None))
 
         btn_back = ScrButton(self, direction='left', goal='main', text="Назад", size_hint=(1, .2),
