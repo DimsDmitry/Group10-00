@@ -7,12 +7,13 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.scrollview import ScrollView
 
+
 from instructions import *
 from ruffier import test
 
 
-age = 7
 name = ''
+age = 7
 p1, p2, p3 = 0, 0, 0
 
 
@@ -21,9 +22,9 @@ class InstrScr(Screen):
         super().__init__(**kwargs)
         instr = Label(text=txt_instruction)
         lbl1 = Label(text='Введите имя:')
-        lbl2 = Label(text='Введите возраст:')
         self.in_name = TextInput(multiline=False)
-        self.in_age = TextInput(multiline=False)
+        lbl2 = Label(text='Введите возраст:')
+        self.in_age = TextInput(text='7', multiline=False)
         self.btn = Button(text='Начать', size_hint=(0.3, 0.2), pos_hint={'center_x': 0.5})
         self.btn.on_press = self.next
         line1 = BoxLayout(size_hint=(0.8, None), height='30sp')
@@ -49,14 +50,14 @@ class PulseScr(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         instr = Label(text=txt_test1)
+        line = BoxLayout(size_hint=(0.8, None), height='30sp')
         lbl_result = Label(text='Введите результат:')
         self.in_result = TextInput(text='0', multiline=False)
         self.btn = Button(text='Продолжить', size_hint=(0.3, 0.2), pos_hint={'center_x': 0.5})
         self.btn.on_press = self.next
-        line = BoxLayout(size_hint=(0.8, None), height='30sp')
+        outer = BoxLayout(orientation='vertical', padding=8, spacing=8)
         line.add_widget(lbl_result)
         line.add_widget(self.in_result)
-        outer = BoxLayout(orientation='vertical', padding=8, spacing=8)
         outer.add_widget(instr)
         outer.add_widget(line)
         outer.add_widget(self.btn)
@@ -88,9 +89,9 @@ class PulseScr2(Screen):
         super().__init__(**kwargs)
         instr = Label(text=txt_test3)
         lbl1 = Label(text='Результат:')
+        self.in_result1 = TextInput(text='0', multiline=False)
         lbl2 = Label(text='Результат после отдыха:')
-        self.in_result1 = TextInput(multiline=False, text='0')
-        self.in_result2 = TextInput(multiline=False, text='0')
+        self.in_result2 = TextInput(text='0', multiline=False)
         self.btn = Button(text='Завершить', size_hint=(0.3, 0.2), pos_hint={'center_x': 0.5})
         self.btn.on_press = self.next
         line1 = BoxLayout(size_hint=(0.8, None), height='30sp')
@@ -120,26 +121,25 @@ class Result(Screen):
         self.instr = Label(text='')
         self.outer.add_widget(self.instr)
         self.add_widget(self.outer)
-        self.on_enter = self.calculate
+        self.on_enter = self.calc
 
-    def calculate(self):
+    def calc(self):
         global name
-        result = name + '\n' + test(p1, p2, p3, age)
-        self.instr.text = result
+        result = test(p1, p2, p3, age)
+        self.instr.text = name + '\n' + result
 
 
 class HeartCheck(App):
+
     def build(self):
         sm = ScreenManager()
         sm.add_widget(InstrScr(name='instr'))
         sm.add_widget(PulseScr(name='pulse1'))
         sm.add_widget(CheckSits(name='sits'))
-        sm.add_widget(CheckSits(name='sits'))
+        sm.add_widget(PulseScr2(name='pulse2'))
+        sm.add_widget(Result(name='result'))
 
         return sm
 
 
-app = HeartCheck()
-app.run()
-
-
+HeartCheck().run()
