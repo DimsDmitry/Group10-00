@@ -17,6 +17,14 @@ age = 7
 p1, p2, p3 = 0, 0, 0
 
 
+def check_int(str_num):
+    #возвращает число, либо False, если не получается конвертировать строку в число
+    try:
+        return int(str_num)
+    except:
+        return False
+
+
 class InstrScr(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -43,7 +51,12 @@ class InstrScr(Screen):
     def next(self):
         global name
         name = self.in_name.text
-        self.manager.current = 'pulse1'
+        age = check_int(self.in_age.text)
+        if age == False or age < 7:
+            age = 7
+            self.in_age.text = str(age)
+        else:
+            self.manager.current = 'pulse1'
 
 
 class PulseScr(Screen):
@@ -65,8 +78,12 @@ class PulseScr(Screen):
 
     def next(self):
         global p1
-        p1 = int(self.in_result.text)
-        self.manager.current = 'sits'
+        p1 = check_int(self.in_result.text)
+        if not p1 or p1 <= 0:
+            p1 = 0
+            self.in_result.text = str(p1)
+        else:
+            self.manager.current = 'sits'
 
 
 class CheckSits(Screen):
@@ -109,9 +126,17 @@ class PulseScr2(Screen):
 
     def next(self):
         global p2, p3
-        p2 = int(self.in_result1.text)
-        p3 = int(self.in_result2.text)
-        self.manager.current = 'result'
+        p2 = check_int(self.in_result1.text)
+        p3 = check_int(self.in_result2.text)
+        if not p2 or p2 <= 0:
+            p2 = 0
+            self.in_result1.text = str(p2)
+        elif not p3 or p3 <= 0:
+            p3 = 0
+            self.in_result1.text = str(p3)
+        else:
+            # переходим на след. экран
+            self.manager.current = 'result'
 
 
 class Result(Screen):

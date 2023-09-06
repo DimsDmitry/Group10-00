@@ -1,2 +1,3 @@
-a = 5
-print(type(a))
+test = print()
+
+print(type(test))
