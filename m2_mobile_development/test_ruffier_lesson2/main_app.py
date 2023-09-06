@@ -52,7 +52,7 @@ class InstrScr(Screen):
         global name
         name = self.in_name.text
         age = check_int(self.in_age.text)
-        if age == False or age < 7:
+        if not age or age < 7:
             age = 7
             self.in_age.text = str(age)
         else:
