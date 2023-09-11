@@ -10,6 +10,7 @@ from kivy.uix.scrollview import ScrollView
 
 from instructions import *
 from ruffier import test
+from seconds import Seconds
 
 
 name = ''
@@ -52,7 +53,7 @@ class InstrScr(Screen):
         global name
         name = self.in_name.text
         age = check_int(self.in_age.text)
-        if age == False or age < 7:
+        if not age or age < 7:
             age = 7
             self.in_age.text = str(age)
         else:
@@ -63,27 +64,44 @@ class PulseScr(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         instr = Label(text=txt_test1)
+        self.next_screen = False
+
+        self.lbl_sec = Seconds(15)
+        self.lbl_sec.bind(done=self.sec_finished)
+
         line = BoxLayout(size_hint=(0.8, None), height='30sp')
         lbl_result = Label(text='Введите результат:')
         self.in_result = TextInput(text='0', multiline=False)
-        self.btn = Button(text='Продолжить', size_hint=(0.3, 0.2), pos_hint={'center_x': 0.5})
+        self.in_result.set_disabled(True)
+        self.btn = Button(text='Начать', size_hint=(0.3, 0.2), pos_hint={'center_x': 0.5})
         self.btn.on_press = self.next
         outer = BoxLayout(orientation='vertical', padding=8, spacing=8)
         line.add_widget(lbl_result)
         line.add_widget(self.in_result)
         outer.add_widget(instr)
+        outer.add_widget(self.lbl_sec)
         outer.add_widget(line)
         outer.add_widget(self.btn)
         self.add_widget(outer)
 
+    def sec_finished(self, *args):
+        self.next_screen = True
+        self.in_result.set_disabled(False)
+        self.btn.set_disabled(False)
+        self.btn.text = 'Продолжить'
+
     def next(self):
-        global p1
-        p1 = check_int(self.in_result.text)
-        if not p1 or p1 <= 0:
-            p1 = 0
-            self.in_result.text = str(p1)
+        if not self.next_screen:
+            self.btn.set_disabled(True)
+            self.lbl_sec.start()
         else:
-            self.manager.current = 'sits'
+            global p1
+            p1 = check_int(self.in_result.text)
+            if not p1 or p1 <= 0:
+                p1 = 0
+                self.in_result.text = str(p1)
+            else:
+                self.manager.current = 'sits'
 
 
 class CheckSits(Screen):
