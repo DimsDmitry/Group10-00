@@ -121,40 +121,76 @@ class CheckSits(Screen):
 
 class PulseScr2(Screen):
     def __init__(self, **kwargs):
+        self.next_screen = False
+        self.stage = 0
         super().__init__(**kwargs)
         instr = Label(text=txt_test3)
-        lbl1 = Label(text='Результат:')
+        lbl_result1 = Label(text='Результат:')
         self.in_result1 = TextInput(text='0', multiline=False)
-        lbl2 = Label(text='Результат после отдыха:')
+        lbl_result2 = Label(text='Результат после отдыха:')
         self.in_result2 = TextInput(text='0', multiline=False)
-        self.btn = Button(text='Завершить', size_hint=(0.3, 0.2), pos_hint={'center_x': 0.5})
+        self.btn = Button(text='Начать', size_hint=(0.3, 0.2), pos_hint={'center_x': 0.5})
         self.btn.on_press = self.next
+
+        self.lbl_sec = Seconds(15)
+        self.lbl_sec.bind(done=self.sec_finished)
+        self.lbl1 = Label(text='Считайте пульс')
+
         line1 = BoxLayout(size_hint=(0.8, None), height='30sp')
         line2 = BoxLayout(size_hint=(0.8, None), height='30sp')
-        line1.add_widget(lbl1)
+        line1.add_widget(lbl_result1)
         line1.add_widget(self.in_result1)
-        line2.add_widget(lbl2)
+        line2.add_widget(lbl_result2)
         line2.add_widget(self.in_result2)
+
+        self.in_result1.set_disabled(True)
+        self.in_result2.set_disabled(True)
+
         outer = BoxLayout(orientation='vertical', padding=8, spacing=8)
         outer.add_widget(instr)
+        outer.add_widget(self.lbl1)
+        outer.add_widget(self.lbl_sec)
         outer.add_widget(line1)
         outer.add_widget(line2)
         outer.add_widget(self.btn)
         self.add_widget(outer)
 
+    def sec_finished(self, *args):
+        if self.stage == 0:
+            #заканчиваем 1-й подсчёт, отдыхаем
+            self.stage = 1
+            self.lbl1.text = 'Отдыхайте'
+            self.lbl_sec.restart(30)
+            self.in_result1.set_disabled(False)
+        elif self.stage == 1:
+            #заканчиваем отдых, начинаем второй подсчёт пульса
+            self.stage = 2
+            self.lbl1.text = 'Считайте пульс'
+            self.lbl_sec.restart(15)
+        elif self.stage == 2:
+            self.in_result2.set_disabled(False)
+            self.btn.set_disabled(False)
+            self.lbl1.text = 'Завершить'
+            self.next_screen = True
+
+
     def next(self):
-        global p2, p3
-        p2 = check_int(self.in_result1.text)
-        p3 = check_int(self.in_result2.text)
-        if not p2 or p2 <= 0:
-            p2 = 0
-            self.in_result1.text = str(p2)
-        elif not p3 or p3 <= 0:
-            p3 = 0
-            self.in_result1.text = str(p3)
+        if not self.next_screen:
+            self.btn.set_disabled(True)
+            self.lbl_sec.start()
         else:
-            # переходим на след. экран
-            self.manager.current = 'result'
+            global p2, p3
+            p2 = check_int(self.in_result1.text)
+            p3 = check_int(self.in_result2.text)
+            if not p2 or p2 <= 0:
+                p2 = 0
+                self.in_result1.text = str(p2)
+            elif not p3 or p3 <= 0:
+                p3 = 0
+                self.in_result1.text = str(p3)
+            else:
+                # переходим на след. экран
+                self.manager.current = 'result'
 
 
 class Result(Screen):
