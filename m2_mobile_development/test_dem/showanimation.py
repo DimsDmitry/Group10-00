@@ -6,6 +6,7 @@ from kivy.uix.label import Label
 from kivy.uix.boxlayout import BoxLayout
 from kivy.animation import Animation
 
+
 class AnimatedButton(Button):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -16,12 +17,12 @@ class AnimatedButton(Button):
         start_font_size = self.font_size
 
         animate = Animation(background_color=(0, 0, 1, 1), duration=1.5)
-        animate = animate + Animation(size_hint=(1, 1))
+        animate = animate + Animation(size_hint=(1, 1), duration=5)
         animate = animate + Animation(font_size=35)
         animate = animate + Animation(size_hint=(.5, .5), font_size=14, background_color=(1, 1, 0, 1), duration=1.5)
         animate = animate + Animation(pos_hint={'center_x': 1.1}, background_color=(0, 1, 1, 1))
         animate = animate + Animation(pos_hint={'center_x': 0.1}, background_color=(0, 0, 1, 1), duration=0.5)
-        back = Animation(background_color=start_color, size_hint=start_size_h, pos_hint=start_pos_hint, font_size=start_font_size )
+        back = Animation(background_color=start_color, size_hint=start_size_h, pos_hint=start_pos_hint, font_size=start_font_size)
 
         self.animate = animate + back
 

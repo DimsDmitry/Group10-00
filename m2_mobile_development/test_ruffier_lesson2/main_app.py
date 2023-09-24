@@ -6,11 +6,16 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.scrollview import ScrollView
+from kivy.core.window import Window
 
 
 from instructions import *
 from ruffier import test
 from seconds import Seconds
+
+
+Window.clearcolor = (.63, .29, .72, 1)
+btn_color = (.95, .25, .81, 0.8)
 
 
 name = ''
@@ -36,6 +41,7 @@ class InstrScr(Screen):
         self.in_age = TextInput(text='7', multiline=False)
         self.btn = Button(text='Начать', size_hint=(0.3, 0.2), pos_hint={'center_x': 0.5})
         self.btn.on_press = self.next
+        self.btn.background_color = btn_color
         line1 = BoxLayout(size_hint=(0.8, None), height='30sp')
         line2 = BoxLayout(size_hint=(0.8, None), height='30sp')
         line1.add_widget(lbl1)
@@ -75,6 +81,7 @@ class PulseScr(Screen):
         self.in_result.set_disabled(True)
         self.btn = Button(text='Начать', size_hint=(0.3, 0.2), pos_hint={'center_x': 0.5})
         self.btn.on_press = self.next
+        self.btn.background_color = btn_color
         outer = BoxLayout(orientation='vertical', padding=8, spacing=8)
         line.add_widget(lbl_result)
         line.add_widget(self.in_result)
@@ -110,6 +117,7 @@ class CheckSits(Screen):
         instr = Label(text=txt_sits)
         self.btn = Button(text='Продолжить', size_hint=(0.3, 0.2), pos_hint={'center_x': 0.5})
         self.btn.on_press = self.next
+        self.btn.background_color = btn_color
         outer = BoxLayout(orientation='vertical', padding=8, spacing=8)
         outer.add_widget(instr)
         outer.add_widget(self.btn)
@@ -144,6 +152,7 @@ class PulseScr2(Screen):
         line2.add_widget(lbl_result2)
         line2.add_widget(self.in_result2)
         self.btn = Button(text='Начать', size_hint=(0.3, 0.5), pos_hint={'center_x': 0.5})
+        self.btn.background_color = btn_color
         self.btn.on_press = self.next
         outer = BoxLayout(orientation='vertical', padding=8, spacing=8)
         outer.add_widget(instr)
