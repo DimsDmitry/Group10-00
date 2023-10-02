@@ -12,24 +12,36 @@ from kivy.properties import *
 
 
 class Runner(BoxLayout):
-    #зависимость от количества сделанных приседаний
+    # зависимость от количества сделанных приседаний
     value = NumericProperty(0)
-    #сделаны ли все перемещения
+    # сделаны ли все перемещения
     finished = BooleanProperty(False)
 
     def __init__(self,
-                 total, steptime, autorepeat,
+                 total=10, steptime=1, autorepeat=True,
                  bcolor=(.65, .24, .76, 1), btext_inprogress='Приседание',
                  **kwargs):
         super().__init__(**kwargs)
         self.total = total
         self.autorepeat = autorepeat
         self.btext_inprogress = btext_inprogress
-        self.animation = (Animation(pos_hint={'top': 0.1}, duration=steptime/2
-                        + Animation(pos_hint={'top': 1.0}, duration=steptime/2)
+        self.animation = (Animation(pos_hint={'top': 0.1}, duration=steptime / 2)
+                          + Animation(pos_hint={'top': 1.0}, duration=steptime / 2))
+        self.animation.on_progress = self.next
+        self.btn = Button(size_hint=(1, 0.1), pos_hint={'top': 1.0}, background_color=bcolor)
+        self.add_widget(self.btn)
 
     def start(self):
-        pass
+        self.value = 0
+        self.finished = False
+        self.btn.text = self.btext_inprogress
+        if self.autorepeat:
+            self.animation.repeat = True
+        self.animation.start(self.btn)
 
     def next(self, widget, step):
-        pass
+        if step == 1.0:
+            self.value += 1
+            if self.value >= self.total:
+                self.animation.repeat = False
+                self.finished = True
