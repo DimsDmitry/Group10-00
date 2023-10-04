@@ -8,17 +8,14 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.scrollview import ScrollView
 from kivy.core.window import Window
 
-
 from instructions import *
 from ruffier import test
 from seconds import Seconds
 from runner import *
 from sits import *
 
-
 Window.clearcolor = (.63, .29, .72, 1)
 btn_color = (.95, .25, .81, 0.8)
-
 
 name = ''
 age = 7
@@ -26,7 +23,7 @@ p1, p2, p3 = 0, 0, 0
 
 
 def check_int(str_num):
-    #возвращает число, либо False, если не получается конвертировать строку в число
+    # возвращает число, либо False, если не получается конвертировать строку в число
     try:
         return int(str_num)
     except:
