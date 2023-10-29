@@ -22,6 +22,7 @@ print(100 * '#', '\n')
 result = df.pivot_table(columns='Category', index='Content Rating', values='Reviews', aggfunc='max')
 print(type(result))
 print(result[['EDUCATION', 'FAMILY', 'GAME']])
+print(100 * '#', '\n')
 
 
 
@@ -30,6 +31,12 @@ print(result[['EDUCATION', 'FAMILY', 'GAME']])
 # Обрати внимание, что в некоторых ячейках полученной таблицы отражается не число, а значение "NaN" - Not a Number
 # Эта запись означает, что в данной группе нет ни одного приложения.
 # Выбери названия категорий, в которых есть платные приложения для всех возрастных групп и расположи их в алфавитном порядке.
+result = df[df['Type'] == 'Paid'].pivot_table(columns='Content Rating', index='Category', values='Reviews', aggfunc='mean')
+print(result)
+print(100 * '#', '\n')
 
-# Бонусная задача. Найди категории бесплатных (Type == 'Free') приложений, 
+# Бонусная задача. Найди категории бесплатных (Type == 'Free') приложений,
 # в которых приложения разработаны не для всех возрастных групп ('Content Rating')
+result = df[df['Type'] == 'Free'].pivot_table(columns='Content Rating', index='Category', values='Reviews', aggfunc='mean')
+print(result)
+print(100 * '#', '\n')
