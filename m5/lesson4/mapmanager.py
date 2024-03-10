@@ -110,3 +110,17 @@ class Mapmanager():
                 x, y, z = block.getPos()
                 pos = (int(x), int(y), int(z))
                 pickle.dump(pos, file)
+
+    def loadMap(self):
+        # очищаем карту
+        self.clear()
+        # открываем бинарный файл на чтение
+        with open('my_map.dat', 'rb') as file:
+            # считываем количество блоков
+            length = pickle.load(file)
+            # затем итерируем все блоки циклом for
+            for i in range(length):
+                # получаем позицию
+                pos = pickle.load(file)
+                # создаём блок на основе полученных координат
+                self.addBlock(pos)

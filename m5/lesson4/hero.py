@@ -14,6 +14,9 @@ key_switch_mode = 'z'  # смена игрового режима (можно п
 key_build = 'b'  # построить блок перед собой
 key_destroy = 'v'  # разрушить блок перед собой
 
+key_savemap = 'k'  # сохранить карту
+key_loadmap = 'l'  # загрузить карту
+
 
 class Hero:
     def __init__(self, pos, land):
@@ -211,3 +214,6 @@ class Hero:
 
         base.accept(key_build, self.build)
         base.accept(key_destroy, self.destroy)
+
+        base.accept(key_savemap, self.land.saveMap)
+        base.accept(key_loadmap, self.land.loadMap)
