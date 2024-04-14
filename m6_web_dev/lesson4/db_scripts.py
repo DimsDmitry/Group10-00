@@ -59,8 +59,6 @@ def create():
     close()
 
 
-
-
 def show(table):
     query = 'SELECT * FROM ' + table
     open()
@@ -79,6 +77,53 @@ def main():
     clear_db()
     create()
     show_tables()
+
+
+def add_questions():
+    questions = [
+        ('Сколько месяцев в году имеют 28 дней?', 'Все', 'Один', 'Ни одного', 'Два'),
+        ('Чему равно число Пи?', 'Примерно 3.14', '3', '0', 'Ровно 3.14'),
+        ('Какой рукой лучше мешать чай?', 'Ложкой', 'Левой', 'Правой', 'Любой'),
+        ('Что не имеет длины, ширины, высоты, а можно измерить?', 'Время', 'Глупость', 'Море', 'Воздух'),
+        ('Что больше слона и ничего не весит?', 'Тень слона', 'Облако', 'Парашют', 'Облако'),
+        ('Каким станет камень если упадёт в Красное море?', 'Мокрым', 'Красным', 'Розовым', 'Не изменится'),
+        ('Самая высокая гора в мире?', 'Эверест', 'Эльбрус', 'Казбек', 'Аконкагуа')
+    ]
+    open()
+    cursor.executemany(
+        '''INSERT INTO question (question, answer, wrong1, wrong2, wrong3) VALUES (?, ?, ?, ?, ?)''', questions
+    )
+    conn.commit()
+    close()
+
+
+def add_quiz():
+    quizes = [
+        ('Своя игра',),
+        ('Кто хочет стать миллионером?',),
+        ('Самый',)
+    ]
+    open()
+    cursor.executemany(
+        '''INSERT INTO quiz (name) VALUES (?)''', quizes
+    )
+    conn.commit()
+    close()
+
+
+def add_links():
+    # связываем таблицу вопросов и викторин
+    open()
+    cursor.execute('''PRAGMA foreign_keys=on''')
+    query = 'INSERT INTO quiz_content (quiz_id, question_id) VALUES (?, ?)'
+    answer = input('Добавить связь? (д/н)')
+    while answer != 'н':
+        quiz_id = int(input('id викторины'))
+        question_id = int(input('id вопроса'))
+        cursor.execute(query, [quiz_id, question_id])
+        conn.commit()
+        answer = input('Добавить связь? (д/н)')
+    close()
 
 
 if __name__ == "__main__":
